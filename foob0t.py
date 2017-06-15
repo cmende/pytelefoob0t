@@ -20,6 +20,7 @@ from telepot.loop import MessageLoop
 import plugin_loader
 
 commands = {}
+users = {}
 username = None
 
 for i in plugin_loader.get_plugins():
@@ -58,8 +59,11 @@ def handle(msg):
         if c != command:
             continue
 
-        # found it
-        retval = commands[c](args)
+        # found it => look up user
+        uid = msg['from']['id']
+        user = users.setdefault(uid, dict())
+
+        retval = commands[c](user, args)
         bot.sendMessage(chat_id, retval)
 
 bot = telepot.Bot("410481893:AAFOD7G_hoWsQNMrbEiw4ARqUlb-LzvWjnY")

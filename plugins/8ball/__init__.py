@@ -37,7 +37,7 @@ choices = [
     'Very doubtful'
 ]
 
-def eightball(args):
+def eightball(user, args):
     return random.choice(choices)
 
 commands = {

@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-def help(args):
+def help(user, args):
     if args is None:
         return "wat?! go help yourself"
 

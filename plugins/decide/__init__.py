@@ -14,7 +14,7 @@
 
 import random
 
-def decide(args):
+def decide(user, args):
     # roll yes/no
     if args is None:
         return random.choice(['yes','no'])

@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-def urban(args):
+def urban(user, args):
     if args is None:
         endpoint = 'https://api.urbandictionary.com/v0/random'
     else:
