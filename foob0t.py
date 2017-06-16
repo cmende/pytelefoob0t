@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
 import time
 
 import telepot
@@ -66,7 +67,10 @@ def handle(msg):
         retval = commands[c](user, args)
         bot.sendMessage(chat_id, retval)
 
-bot = telepot.Bot("410481893:AAFOD7G_hoWsQNMrbEiw4ARqUlb-LzvWjnY")
+if len(sys.argv) < 2:
+    sys.exit('Usage: %s <telegram api token>' % sys.argv[0])
+
+bot = telepot.Bot(sys.argv[1])
 username = bot.getMe()['username']
 MessageLoop(bot, handle).run_as_thread()
 
