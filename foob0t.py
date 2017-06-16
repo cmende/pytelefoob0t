@@ -62,7 +62,7 @@ def handle(msg):
 
         # found it => look up user
         uid = msg['from']['id']
-        user = users.setdefault(uid, dict())
+        user = users.setdefault(uid, msg['from'])
 
         retval = commands[c](user, args)
         bot.sendMessage(chat_id, retval)
