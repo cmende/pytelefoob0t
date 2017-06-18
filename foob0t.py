@@ -67,6 +67,9 @@ def handle(msg):
         retval = commands[c](user, args)
         bot.sendMessage(chat_id, retval)
 
+def cleanup():
+    pass
+
 if len(sys.argv) < 2:
     sys.exit('Usage: %s <telegram api token>' % sys.argv[0])
 
@@ -76,4 +79,8 @@ username = bot.getMe()['username']
 MessageLoop(bot, handle).run_as_thread()
 
 while 1:
-    time.sleep(10)
+    try:
+        time.sleep(10)
+    except KeyboardInterrupt:
+        cleanup()
+        sys.exit()
