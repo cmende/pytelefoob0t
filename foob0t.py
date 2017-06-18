@@ -22,12 +22,12 @@ import plugin_loader
 
 commands = {}
 users = {}
-username = None
 
-for i in plugin_loader.get_plugins():
-    print('Loading plugin ' + i['name'])
-    plugin = plugin_loader.load_plugin(i)
-    commands.update(plugin.commands)
+def load_plugins():
+    for i in plugin_loader.get_plugins():
+        print('Loading plugin ' + i['name'])
+        plugin = plugin_loader.load_plugin(i)
+        commands.update(plugin.commands)
 
 def handle(msg):
     content_type, chat_type, chat_id = telepot.glance(msg)
@@ -71,6 +71,7 @@ if len(sys.argv) < 2:
     sys.exit('Usage: %s <telegram api token>' % sys.argv[0])
 
 bot = telepot.Bot(sys.argv[1])
+load_plugins()
 username = bot.getMe()['username']
 MessageLoop(bot, handle).run_as_thread()
 
