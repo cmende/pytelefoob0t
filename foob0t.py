@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import shelve
 import sys
 import time
 
@@ -21,7 +22,12 @@ from telepot.loop import MessageLoop
 import plugin_loader
 
 commands = {}
-users = {}
+
+def load_users():
+    try:
+        return d['users']
+    except KeyError:
+        return {}
 
 def load_plugins():
     for i in plugin_loader.get_plugins():
@@ -68,12 +74,15 @@ def handle(msg):
         bot.sendMessage(chat_id, retval)
 
 def cleanup():
-    pass
+    d['users'] = users
+    d.close()
 
 if len(sys.argv) < 2:
     sys.exit('Usage: %s <telegram api token>' % sys.argv[0])
 
+d = shelve.open('foob0t.users')
 bot = telepot.Bot(sys.argv[1])
+users = load_users()
 load_plugins()
 username = bot.getMe()['username']
 MessageLoop(bot, handle).run_as_thread()
