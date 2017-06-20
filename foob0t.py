@@ -64,16 +64,15 @@ def handle(users, commands, bot, msg):
         command = command[:-len(username)-1]
 
     # search for plugin handling command
-    for c in commands:
-        if c != command:
-            continue
+    if command not in commands:
+        return
 
-        # found it => look up user
-        uid = msg['from']['id']
-        user = users.setdefault(uid, msg['from'])
+    # found it => look up user
+    uid = msg['from']['id']
+    user = users.setdefault(uid, msg['from'])
 
-        retval = commands[c](user, args)
-        bot.sendMessage(chat_id, retval)
+    retval = commands[command](user, args)
+    bot.sendMessage(chat_id, retval)
 
 def cleanup(d, users):
     d['users'] = users
