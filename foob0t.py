@@ -72,7 +72,7 @@ def handle(users, commands, bot, msg):
     user = users.setdefault(uid, msg['from'])
 
     retval = commands[command](user, args)
-    bot.sendMessage(chat_id, retval)
+    bot.sendMessage(chat_id, retval, parse_mode='Markdown')
 
 def cleanup(d, users):
     d['users'] = users
