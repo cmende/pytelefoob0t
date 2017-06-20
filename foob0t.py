@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from functools import partial
+from functools import partial, reduce
 import shelve
 import sys
 import time
@@ -29,12 +29,12 @@ def load_users(d):
         return {}
 
 def load_plugins():
-    commands = {}
-    for i in plugin_loader.get_plugins():
-        print('Loading plugin ' + i['name'])
-        plugin = plugin_loader.load_plugin(i)
-        commands.update(plugin.commands)
-    return commands
+    def load(commands, plugin):
+        print('Loading plugin ' + plugin['name'])
+        plugin = plugin_loader.load_plugin(plugin)
+        return dict(commands, **plugin.commands)
+
+    return reduce(load, plugin_loader.get_plugins(), {})
 
 def handle(users, commands, bot, msg):
     content_type, chat_type, chat_id = telepot.glance(msg)
