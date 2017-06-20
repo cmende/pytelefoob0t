@@ -18,6 +18,17 @@ def help(user, args):
 
     return args
 
+def version(user, args):
+    try:
+        with open('.git/refs/heads/master', 'r') as f:
+            rev = f.read()[:8]
+        with open('.git/COMMIT_EDITMSG', 'r') as f:
+            msg = f.read()
+        return '{}: {}'.format(rev, msg)
+    except:
+        return 'unknown'
+
 commands = {
-    'help': help
+    'help': help,
+    'version': version
 }
