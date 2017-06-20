@@ -12,14 +12,33 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import requests
+
+API = 'https://api.urbandictionary.com/v0/'
+
 def urban(user, args):
     if args is None:
-        endpoint = 'https://api.urbandictionary.com/v0/random'
+        url = API + 'random'
+        params = {}
     else:
-        endpoint = 'https://api.urbandictionary.com/v0/define?term='
+        url = API + 'define'
+        params = { 'term': args }
 
-    return args
+    r = requests.get(url, params)
+
+    first = r.json()['list'][0]
+    word = first['word']
+    definition = first['definition']
+    example = first['example']
+
+    return """\
+*{}*
+
+{}
+
+_{}_
+""".format(word, definition, example)
 
 commands = {
-    'help': help
+    'urban': urban
 }
