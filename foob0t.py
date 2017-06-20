@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from functools import partial
 import shelve
 import sys
 import time
@@ -21,21 +22,21 @@ from telepot.loop import MessageLoop
 
 import plugin_loader
 
-commands = {}
-
-def load_users():
+def load_users(d):
     try:
         return d['users']
     except KeyError:
         return {}
 
 def load_plugins():
+    commands = {}
     for i in plugin_loader.get_plugins():
         print('Loading plugin ' + i['name'])
         plugin = plugin_loader.load_plugin(i)
         commands.update(plugin.commands)
+    return commands
 
-def handle(msg):
+def handle(users, commands, bot, msg):
     content_type, chat_type, chat_id = telepot.glance(msg)
     print(content_type, chat_type, chat_id)
 
@@ -58,6 +59,7 @@ def handle(msg):
     command = command[1:]
 
     # strip username from command
+    username = bot.getMe()['username']
     if command.endswith('@'+username):
         command = command[:-len(username)-1]
 
@@ -73,23 +75,29 @@ def handle(msg):
         retval = commands[c](user, args)
         bot.sendMessage(chat_id, retval)
 
-def cleanup():
+def cleanup(d, users):
     d['users'] = users
     d.close()
+
+def start(token):
+    d = shelve.open('foob0t.users')
+    users = load_users(d)
+
+    commands = load_plugins()
+
+    bot = telepot.Bot(token)
+    handler = partial(handle, users, commands, bot)
+    MessageLoop(bot, handler).run_as_thread()
+
+    while 1:
+        try:
+            time.sleep(10)
+        except KeyboardInterrupt:
+            cleanup(d, users)
+            sys.exit()
+
 
 if len(sys.argv) < 2:
     sys.exit('Usage: %s <telegram api token>' % sys.argv[0])
 
-d = shelve.open('foob0t.users')
-bot = telepot.Bot(sys.argv[1])
-users = load_users()
-load_plugins()
-username = bot.getMe()['username']
-MessageLoop(bot, handle).run_as_thread()
-
-while 1:
-    try:
-        time.sleep(10)
-    except KeyboardInterrupt:
-        cleanup()
-        sys.exit()
+start(sys.argv[1])
